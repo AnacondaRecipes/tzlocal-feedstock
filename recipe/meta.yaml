@@ -9,13 +9,15 @@ source:
   sha256: 4ebeb848845ac898da6519b9b31879cf13b6626f7184c496037b818e238f2c4e
 
 build:
-  number: 0
+  number: 1
   script: python -m pip install --no-deps --ignore-installed .
 
 requirements:
   host:
     - python
     - pip
+    - setuptools
+    - wheel
 
   run:
     - python

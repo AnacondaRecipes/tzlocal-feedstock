@@ -9,13 +9,15 @@ source:
   sha256: 643c97c5294aedc737780a49d9df30889321cbe1204eac2c2ec6134035a92e44
 
 build:
-  number: 0
+  number: 1
   script: python -m pip install --no-deps --ignore-installed .
 
 requirements:
   host:
     - python
     - pip
+    - setuptools
+    - wheel
 
   run:
     - python
@@ -24,10 +26,20 @@ requirements:
 test:
   imports:
     - tzlocal
+  requires:
+    - pip
+  commands:
+    - pip check
 
 about:
+  description: |
+    This Python module returns a tzinfo object (with a pytz_deprecation_shim, 
+    for pytz compatibility) with the local timezone information, 
+    under Unix and Windows.
+  doc_source_url: https://github.com/regebro/tzlocal/tree/{{ version }}
   home: https://github.com/regebro/tzlocal
-  license: MIT
+  license: MIT 
+  license_family: MIT
   license_file: LICENSE.txt
   summary: 'tzinfo object for the local timezone'
   dev_url: https://github.com/regebro/tzlocal

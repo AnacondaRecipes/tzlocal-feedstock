@@ -23,7 +23,7 @@ requirements:
   run:
     - python
     - backports.zoneinfo  # [py<39]
-    - tzdata  # [win]
+    - python-tzdata  # [win]
 
 test:
   imports:

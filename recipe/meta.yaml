@@ -22,24 +22,35 @@ requirements:
 
   run:
     - python
-    - pytz
+    - backports.zoneinfo  # [py<39]
+    - tzdata  # [win]
 
 test:
   imports:
     - tzlocal
+  source_files:
+    - tests
   requires:
     - pip
+    - pytest
+    - pytest-mock
   commands:
     - pip check
 
+    {% set tests_to_skip = "_not_a_real_test" %}
+    # Skipping tests due to a symlinks error
+    # https://github.com/regebro/tzlocal/issues/146
+    {% set tests_to_skip = tests_to_skip + " or test_symlink_localtime or test_conflicting or test_noconflict" %}
+    - pytest tests -vv -k "not ({{ tests_to_skip }})"
+
 about:
   description: |
-    This Python module returns a tzinfo object (with a pytz_deprecation_shim, 
-    for pytz compatibility) with the local timezone information, 
+    This Python module returns a tzinfo object (with a pytz_deprecation_shim,
+    for pytz compatibility) with the local timezone information,
     under Unix and Windows.
   doc_source_url: https://github.com/regebro/tzlocal/tree/{{ version }}
   home: https://github.com/regebro/tzlocal
-  license: MIT 
+  license: MIT
   license_family: MIT
   license_file: LICENSE.txt
   summary: 'tzinfo object for the local timezone'

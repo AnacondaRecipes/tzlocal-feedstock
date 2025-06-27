@@ -1,15 +1,16 @@
-{% set version = "5.2" %}
+{% set version = "5.3.1" %}
+{% set tests_to_skip = 'tests_to_skip + " or test_symlink_localtime or test_conflicting or test_noconflict"' %}
 
 package:
   name: tzlocal
   version: {{ version }}
 
 source:
-  url: https://pypi.io/packages/source/t/tzlocal/tzlocal-{{ version }}.tar.gz
-  sha256: 8d399205578f1a9342816409cc1e46a93ebd5755e39ea2d85334bea911bf0e6e
+  url: https://pypi.org/packages/source/t/tzlocal/tzlocal-{{ version }}.tar.gz
+  sha256: cceffc7edecefea1f595541dbd6e990cb1ea3d19bf01b2809f362a03dd7921fd
 
 build:
-  skip: true  # [py<38]
+  skip: true  # [py<39]
   number: 0
   script: python -m pip install --no-deps --ignore-installed . --no-build-isolation
 
@@ -17,13 +18,12 @@ requirements:
   host:
     - python
     - pip
-    - setuptools
-    - wheel
-
+    - setuptools >=64
   run:
     - python
     - backports.zoneinfo  # [py<39]
     - python-tzdata  # [win]
+    - tzdata  # [win]
 
 test:
   imports:
@@ -36,11 +36,8 @@ test:
     - pytest-mock
   commands:
     - pip check
-
-    {% set tests_to_skip = "_not_a_real_test" %}
     # Skipping tests due to a symlinks error
     # https://github.com/regebro/tzlocal/issues/146
-    {% set tests_to_skip = tests_to_skip + " or test_symlink_localtime or test_conflicting or test_noconflict" %}
     - pytest tests -vv -k "not ({{ tests_to_skip }})"
 
 about:
@@ -53,7 +50,7 @@ about:
   license: MIT
   license_family: MIT
   license_file: LICENSE.txt
-  summary: 'tzinfo object for the local timezone'
+  summary: tzinfo object for the local timezone
   dev_url: https://github.com/regebro/tzlocal
 
 extra:

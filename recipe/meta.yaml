@@ -1,60 +1,58 @@
-{% set version = "5.2" %}
+{% set name = "tzlocal" %}
+{% set version = "5.3.1" %}
 
 package:
-  name: tzlocal
+  name: {{ name }}
   version: {{ version }}
 
 source:
-  url: https://pypi.io/packages/source/t/tzlocal/tzlocal-{{ version }}.tar.gz
-  sha256: 8d399205578f1a9342816409cc1e46a93ebd5755e39ea2d85334bea911bf0e6e
+  url: https://pypi.org/packages/source/{{ name[0] }}/{{ name }}/{{ name.replace('-', '_')}}-{{ version }}.tar.gz
+  sha256: cceffc7edecefea1f595541dbd6e990cb1ea3d19bf01b2809f362a03dd7921fd
 
 build:
-  skip: true  # [py<38]
   number: 0
   script: python -m pip install --no-deps --ignore-installed . --no-build-isolation
+  skip: true  # [py<39]
 
 requirements:
   host:
     - python
     - pip
-    - setuptools
+    - setuptools >=64
     - wheel
-
   run:
     - python
-    - backports.zoneinfo  # [py<39]
     - python-tzdata  # [win]
 
+{% set tests_to_skip = "_not_a_real_test" %}
+# Skipping tests due to a symlinks error
+# https://github.com/regebro/tzlocal/issues/146
+{% set tests_to_skip = tests_to_skip + " or test_symlink_localtime or test_conflicting or test_noconflict" %}
 test:
-  imports:
-    - tzlocal
   source_files:
     - tests
-  requires:
-    - pip
-    - pytest
-    - pytest-mock
+  imports:
+    - tzlocal
   commands:
     - pip check
-
-    {% set tests_to_skip = "_not_a_real_test" %}
-    # Skipping tests due to a symlinks error
-    # https://github.com/regebro/tzlocal/issues/146
-    {% set tests_to_skip = tests_to_skip + " or test_symlink_localtime or test_conflicting or test_noconflict" %}
     - pytest tests -vv -k "not ({{ tests_to_skip }})"
+  requires:
+    - pip
+    - pytest >=4.3
+    - pytest-mock >=3.3
 
 about:
+  home: https://github.com/regebro/tzlocal
   description: |
     This Python module returns a tzinfo object (with a pytz_deprecation_shim,
     for pytz compatibility) with the local timezone information,
     under Unix and Windows.
-  doc_source_url: https://github.com/regebro/tzlocal/tree/{{ version }}
-  home: https://github.com/regebro/tzlocal
   license: MIT
   license_family: MIT
   license_file: LICENSE.txt
-  summary: 'tzinfo object for the local timezone'
+  summary: tzinfo object for the local timezone
   dev_url: https://github.com/regebro/tzlocal
+  doc_url: https://github.com/regebro/tzlocal/blob/master/README.rst
 
 extra:
   recipe-maintainers:
